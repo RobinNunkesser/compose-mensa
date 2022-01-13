@@ -9,17 +9,25 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.navigation.NavController
 import de.hshl.isd.mensa.ui.theme.MensaTheme
-import io.github.italbytz.adapters.meal.MockGetMealsCommand
+import io.github.italbytz.adapters.meal.OpenMensaGetMealsCommand
+import io.github.italbytz.adapters.meal.OpenMensaMeal
+import io.github.italbytz.adapters.meal.OpenMensaMealCollection
+import io.github.italbytz.adapters.meal.OpenMensaPrice
+import io.github.italbytz.ports.meal.Additives
+import io.github.italbytz.ports.meal.Allergens
+import io.github.italbytz.ports.meal.Category
 import io.github.italbytz.ports.meal.MealCollection
 import java.time.LocalDate
+import java.util.*
 
 @Composable
 fun Mensa(navController: NavController) {
-    val service = MockGetMealsCommand()
+    val service = OpenMensaGetMealsCommand()
     val viewModel = MensaViewModel()
 
     fun success(collections: List<MealCollection>) {
-        viewModel.collections = collections.map { it.toCollectionViewModel() }
+        val mealCollections = collections.map { it.toCollectionViewModel() }
+        viewModel.collections = mealCollections
     }
 
     fun failure(error: Throwable) {
