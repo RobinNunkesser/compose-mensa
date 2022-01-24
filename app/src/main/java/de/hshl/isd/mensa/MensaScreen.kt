@@ -17,6 +17,9 @@ import io.github.italbytz.ports.meal.Additives
 import io.github.italbytz.ports.meal.Allergens
 import io.github.italbytz.ports.meal.Category
 import io.github.italbytz.ports.meal.MealCollection
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.time.LocalDate
 import java.util.*
 
@@ -24,6 +27,7 @@ import java.util.*
 fun Mensa(navController: NavController) {
     val service = OpenMensaGetMealsCommand()
     val viewModel = MensaViewModel()
+    val scope = rememberCoroutineScope()
 
     fun success(collections: List<MealCollection>) {
         val mealCollections = collections.map { it.toCollectionViewModel() }
@@ -34,11 +38,14 @@ fun Mensa(navController: NavController) {
         Log.e("MainContent", error.localizedMessage!!)
     }
 
-    service.execute(
-        MealQueryDTO(42, LocalDate.now()),
-        ::success,
-        ::failure
-    )
+    LaunchedEffect(key1 = "key1") {
+        kotlin.runCatching {
+            withContext(Dispatchers.IO) {
+            service.execute(
+                MealQueryDTO(42, LocalDate.now()))
+            }
+        }.onSuccess(::success).onFailure(::failure)
+    }
 
     MensaTheme {
         Scaffold {
